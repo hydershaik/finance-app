@@ -31,22 +31,11 @@ FinanceIQ is a modern, privacy-first personal finance dashboard built with React
 
 ## Screenshots
 
-> **Landing / Upload Page**
+**Landing / Upload Page**
+
+![FinanceIQ Homepage](screenshot.jpg)
 
 The upload page is your entry point. Drop your bank statement PDF or CSV, and the app processes everything locally.
-
-```
-┌─────────────────────────────────────────────────┐
-│          Your Money, Fully Understood            │
-│                                                 │
-│   [🏦 Bank Statement]   [💳 Credit Card]        │
-│    Drag & drop PDF/CSV   Drag & drop PDF/CSV    │
-│                                                 │
-│        ✨ Try with Sample Data →                 │
-└─────────────────────────────────────────────────┘
-```
-
-To see live screenshots, run the app locally (instructions below) and open it in your browser.
 
 ---
 
