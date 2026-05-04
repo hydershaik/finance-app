@@ -192,32 +192,57 @@ export default function Investments({ transactions }) {
         </div>
       </div>
 
-      {/* Tax Saving */}
+      {/* Tax-Advantaged Accounts */}
       <div className="card" style={{ background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06))', border: '1px solid rgba(99,102,241,0.15)' }}>
-        <div className="section-title">🧾 Tax Saving Opportunities (Section 80C)</div>
-        <div className="section-sub">Reduce your taxable income by up to ₹1,50,000</div>
+        <div className="section-title">🧾 Tax-Advantaged Account Limits (2024)</div>
+        <div className="section-sub">Maximize these accounts before investing in a taxable brokerage</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12, marginTop: 12 }}>
           {[
-            { name: 'ELSS Mutual Fund', limit: 150000, current: currentInvestments.filter(t => t.description.toLowerCase().includes('elss')).reduce((s, t) => s + t.amount, 0), icon: '📊' },
-            { name: 'PPF', limit: 150000, current: 0, icon: '🏛️' },
-            { name: 'Life Insurance (LIC)', limit: 150000, current: currentInvestments.filter(t => t.description.toLowerCase().includes('lic')).reduce((s, t) => s + t.amount * 12, 0), icon: '🛡️' },
-            { name: 'EPF (Employee PF)', limit: 150000, current: 0, icon: '💼' },
+            {
+              name: '401(k) / 403(b)',
+              limit: 23000,
+              current: currentInvestments.filter(t => t.description.toLowerCase().includes('401')).reduce((s, t) => s + t.amount * 12, 0),
+              icon: '🏦',
+              note: 'Pre-tax; reduces taxable income',
+            },
+            {
+              name: 'Roth IRA',
+              limit: 7000,
+              current: currentInvestments.filter(t => t.description.toLowerCase().includes('roth')).reduce((s, t) => s + t.amount * 12, 0),
+              icon: '💰',
+              note: 'After-tax; tax-free growth',
+            },
+            {
+              name: 'HSA (Health Savings)',
+              limit: 4150,
+              current: 0,
+              icon: '🏥',
+              note: 'Triple tax advantage if on HDHP',
+            },
+            {
+              name: '529 College Savings',
+              limit: 18000,
+              current: 0,
+              icon: '🎓',
+              note: 'Tax-free for education expenses',
+            },
           ].map(s => (
             <div key={s.name} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px' }}>
               <div style={{ fontSize: 18, marginBottom: 6 }}>{s.icon}</div>
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{s.name}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 2 }}>{s.name}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>{s.note}</div>
               <div className="progress-bar" style={{ marginBottom: 6 }}>
                 <div className="progress-fill" style={{
-                  width: `${Math.min(100, (s.current / s.limit) * 100)}%`,
+                  width: `${Math.min(100, s.limit > 0 ? (s.current / s.limit) * 100 : 0)}%`,
                   background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
                 }} />
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                {fmt(s.current)} / {fmt(s.limit)} limit
+                {fmt(s.current)} / {fmt(s.limit)} annual limit
               </div>
               {s.current < s.limit && (
                 <div style={{ fontSize: 11, color: 'var(--amber)', marginTop: 4 }}>
-                  Invest {fmt(s.limit - s.current)} more to maximize
+                  {fmt(s.limit - s.current)} remaining to max out
                 </div>
               )}
             </div>

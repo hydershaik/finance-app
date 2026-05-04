@@ -79,7 +79,7 @@ export function generateTips(transactions, summary) {
       type: 'warning',
       icon: '📊',
       title: 'Low Savings Rate — Room to Improve',
-      desc: `You're saving ${savingsRate.toFixed(1)}% of your income. Try reaching 20-30%. Consider automating savings — set up a SIP the day after salary credit.`,
+      desc: `You're saving ${savingsRate.toFixed(1)}% of your income. Target 20%+. Automate it: set up an auto-transfer to a HYSA on payday so you save before you spend.`,
       priority: 2,
     });
   } else {
@@ -94,14 +94,14 @@ export function generateTips(transactions, summary) {
 
   // Food delivery
   const foodDelivery = transactions.filter(t => t.type === 'debit' &&
-    (t.description.toLowerCase().includes('zomato') || t.description.toLowerCase().includes('swiggy')));
-  if (foodDelivery.length >= 4) {
+    (t.description.toLowerCase().includes('doordash') || t.description.toLowerCase().includes('grubhub') || t.description.toLowerCase().includes('uber eats')));
+  if (foodDelivery.length >= 3) {
     const total = foodDelivery.reduce((s, t) => s + t.amount, 0);
     tips.push({
       type: 'warning',
       icon: '🍔',
       title: `High Food Delivery Spend — ${fmt(total)}`,
-      desc: `You ordered food delivery ${foodDelivery.length} times, spending ${fmt(total)}. Cooking at home even 3 days a week could save ${fmt(total * 0.4)}/month = ${fmt(total * 4.8)}/year.`,
+      desc: `You ordered food delivery ${foodDelivery.length} times, spending ${fmt(total)} (avg ${fmt(total / foodDelivery.length)}/order including fees & tips). Meal prepping 3 days a week could save ${fmt(total * 0.45)}/month = ${fmt(total * 5.4)}/year.`,
       priority: 3,
     });
   }
@@ -138,8 +138,8 @@ export function generateTips(transactions, summary) {
     tips.push({
       type: 'danger',
       icon: '📈',
-      title: 'No Investments Found!',
-      desc: `You haven't made any investments this month. Start with at least ${fmt(income * 0.1)}/month in a Nifty 50 Index Fund SIP. Time in market beats timing the market.`,
+      title: 'No Investments Found This Month!',
+      desc: `You haven't invested anything this month. Start with at least ${fmt(income * 0.1)}/month — max out your 401(k) employer match first (it's free money), then contribute to a Roth IRA. Time in market beats timing the market.`,
       priority: 1,
     });
   } else if (investments.length > 0) {
@@ -150,8 +150,25 @@ export function generateTips(transactions, summary) {
         type: 'info',
         icon: '💡',
         title: `Increase Investment Rate (currently ${invRate.toFixed(1)}%)`,
-        desc: `You're investing ${fmt(invTotal)} (${invRate.toFixed(1)}% of income). Financial planners suggest 10-20%. Increase SIP by ${fmt(income * 0.1 - invTotal)} to hit 10%.`,
+        desc: `You're investing ${fmt(invTotal)}/month (${invRate.toFixed(1)}% of income). Aim for 15-20%. Consider increasing your 401(k) contribution by ${fmt(income * 0.1 - invTotal)}/mo to hit 10%.`,
         priority: 3,
+      });
+    }
+  }
+
+  // High housing cost warning
+  const housing = transactions.filter(t => t.type === 'debit' &&
+    (t.description.toLowerCase().includes('rent') || t.description.toLowerCase().includes('mortgage')));
+  if (housing.length > 0 && income > 0) {
+    const housingTotal = housing.reduce((s, t) => s + t.amount, 0);
+    const housingPct = (housingTotal / income) * 100;
+    if (housingPct > 30) {
+      tips.push({
+        type: 'warning',
+        icon: '🏠',
+        title: `Housing is ${housingPct.toFixed(0)}% of Income (Above 30% Rule)`,
+        desc: `Financial advisors recommend keeping housing under 30% of gross income. Your housing costs ${fmt(housingTotal)}/month. Consider a roommate, relocating, or increasing income to rebalance.`,
+        priority: 2,
       });
     }
   }
@@ -162,7 +179,7 @@ export function generateTips(transactions, summary) {
       type: 'info',
       icon: '🛡️',
       title: 'Build Your Emergency Fund',
-      desc: `Target 3-6 months of expenses (${fmt(expenses * 3)}–${fmt(expenses * 6)}) in a liquid fund or high-yield savings account before investing aggressively.`,
+      desc: `Target 3–6 months of expenses (${fmt(expenses * 3)}–${fmt(expenses * 6)}) in a high-yield savings account (Marcus, Ally, or SoFi offer 4%+ APY). This is your financial safety net before investing aggressively.`,
       priority: 4,
     });
   }
@@ -172,57 +189,57 @@ export function generateTips(transactions, summary) {
 
 export const INVESTMENT_IDEAS = [
   {
-    name: 'Nifty 50 Index Fund',
-    type: 'Equity Mutual Fund',
-    returns: '12–15% p.a.',
+    name: 'S&P 500 Index Fund (VOO/SPY)',
+    type: 'ETF / Index Fund',
+    returns: '10–11% avg. p.a.',
     risk: 'medium',
     icon: '📊',
-    desc: 'Low-cost passive fund tracking top 50 Indian companies. Ideal for long-term wealth creation. Start with ₹500/month SIP on Groww or Zerodha.',
-    minAmount: 500,
+    desc: 'Invest in the 500 largest US companies. Vanguard VOO has just 0.03% expense ratio. The simplest, most proven wealth-building vehicle. Buy through Fidelity, Schwab, or Robinhood.',
+    minAmount: 1,
   },
   {
-    name: 'PPF (Public Provident Fund)',
-    type: 'Government Scheme',
-    returns: '7.1% p.a.',
-    risk: 'low',
-    icon: '🏛️',
-    desc: 'Tax-free returns, government-backed. Invest up to ₹1.5L/year for Section 80C tax deduction. 15-year lock-in but very safe.',
-    minAmount: 500,
+    name: '401(k) with Employer Match',
+    type: 'Retirement Account',
+    returns: 'Market + Free Match',
+    risk: 'medium',
+    icon: '🏦',
+    desc: 'Contribute at least enough to get your full employer match — it\'s an instant 50–100% return. 2024 limit: $23,000. Pre-tax contributions lower your taxable income today.',
+    minAmount: 1,
   },
   {
-    name: 'ELSS Tax Saving Fund',
-    type: 'Equity Mutual Fund',
-    returns: '13–16% p.a.',
+    name: 'Roth IRA',
+    type: 'Retirement Account',
+    returns: '10–11% avg. p.a.',
     risk: 'medium',
     icon: '💰',
-    desc: 'Save tax under 80C (up to ₹1.5L) while earning market-linked returns. Lowest lock-in of 3 years among 80C options.',
-    minAmount: 500,
+    desc: 'Tax-free growth forever. Contribute up to $7,000/year (2024). Withdraw contributions anytime without penalty. Best if you expect to be in a higher tax bracket in retirement.',
+    minAmount: 1,
   },
   {
-    name: 'Corporate FD (AAA rated)',
-    type: 'Fixed Deposit',
-    returns: '8–9% p.a.',
+    name: 'High-Yield Savings (HYSA)',
+    type: 'Cash / Emergency Fund',
+    returns: '4.5–5.0% APY',
     risk: 'low',
-    icon: '🏦',
-    desc: 'Higher interest than bank FDs from top-rated companies like Bajaj Finance or HDFC. Suitable for 1–3 year goals.',
-    minAmount: 5000,
+    icon: '🛡️',
+    desc: 'Park your 3–6 month emergency fund here. Ally, Marcus by Goldman Sachs, and SoFi offer 4.5%+ APY — 10× better than traditional bank savings. FDIC insured.',
+    minAmount: 1,
   },
   {
-    name: 'US S&P 500 Index Fund',
-    type: 'International Fund',
-    returns: '10–14% p.a.',
+    name: 'Total Bond Market (BND)',
+    type: 'Bond ETF',
+    returns: '4–5% p.a.',
+    risk: 'low',
+    icon: '📜',
+    desc: 'Stabilize your portfolio with Vanguard BND. Provides steady income and reduces volatility. Ideal as 10–20% of a long-term portfolio or for goals 1–3 years out.',
+    minAmount: 80,
+  },
+  {
+    name: 'Real Estate ETF (VNQ)',
+    type: 'REIT ETF',
+    returns: '8–10% p.a.',
     risk: 'medium',
-    icon: '🌎',
-    desc: 'Diversify globally. Invest in top 500 US companies like Apple, Google, Microsoft. Available via Motilal Oswal or Mirae Asset funds.',
-    minAmount: 100,
-  },
-  {
-    name: 'Sovereign Gold Bond',
-    type: 'Government Bond',
-    returns: '8–12% p.a.',
-    risk: 'low',
-    icon: '🥇',
-    desc: 'Digital gold with 2.5% annual interest + gold price appreciation. Tax-free if held till maturity (8 years). Better than physical gold.',
-    minAmount: 4500,
+    icon: '🏠',
+    desc: 'Own real estate without being a landlord. Vanguard VNQ holds 160+ US REITs. Pays regular dividends and provides inflation protection. Great portfolio diversifier.',
+    minAmount: 80,
   },
 ];

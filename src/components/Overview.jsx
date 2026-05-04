@@ -207,7 +207,7 @@ export default function Overview({ transactions, filters, setFilters }) {
                 tickFormatter={v => `${MONTH_LABELS[v.split('-')[1]]} ${v.split('-')[0]}`}
                 axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
-                tickFormatter={v => `₹${(v/1000).toFixed(0)}K`}
+                tickFormatter={v => `$${(v/1000).toFixed(0)}K`}
                 axisLine={false} tickLine={false} />
               <Tooltip content={<CustomBarTooltip />} />
               <Legend wrapperStyle={{ fontSize: 13, color: 'var(--text-dim)' }} />
@@ -230,7 +230,7 @@ export default function Overview({ transactions, filters, setFilters }) {
                 angle={-30} textAnchor="end" interval={0}
                 axisLine={false} tickLine={false} />
               <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
-                tickFormatter={v => `₹${(v/1000).toFixed(0)}K`}
+                tickFormatter={v => `$${(v/1000).toFixed(0)}K`}
                 axisLine={false} tickLine={false} />
               <Tooltip
                 formatter={(v, n) => [fmt(v), n]}

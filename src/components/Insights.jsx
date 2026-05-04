@@ -199,7 +199,7 @@ export default function Insights({ transactions }) {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{t.description}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                      {new Date(t.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                      {new Date(t.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}
                       {' · '}{t.category}
                     </div>
                   </div>

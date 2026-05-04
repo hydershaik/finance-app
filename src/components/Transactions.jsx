@@ -144,7 +144,7 @@ export default function Transactions({ transactions, filters, setFilters }) {
             ) : paginated.map(t => (
               <tr key={t.id}>
                 <td style={{ color: 'var(--text-dim)', fontSize: 13, whiteSpace: 'nowrap' }}>
-                  {new Date(t.date).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  {new Date(t.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
                 </td>
                 <td className="desc-cell">
                   <div className="desc-main">{t.description}</div>
